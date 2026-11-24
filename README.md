@@ -1,3 +1,4 @@
+
 # Dokumentasi Proyek: Optimasi Rute Distribusi ke Gerai Indomaret di Kota Bandung dengan Algoritma Genetika
 
 Tugas Besar Kecerdasan Buatan 2026–2027 · Dosen: Dr. Budhi Irawan, S.Si., M.T. · Universitas Telkom
@@ -392,3 +393,4 @@ print(kalah.groupby("n").selisih_pct.describe().round(2))
 - `hasil/ortools_<merek>.csv`: `merek, gudang, n, skenario, seed, or_km, detik`.
 - `hasil/parameter_<merek>_n<N>.csv`: `konfig, skenario, gudang, seed_ke, km, detik` (OR-Tools bertanda `konfig = OR-Tools`).
 - `hasil/ringkasan*.csv`: tabel ringkasan dari `06_ringkasan.py` dan `09_eksperimen_parameter.py`.
+
