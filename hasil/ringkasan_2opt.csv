@@ -1,0 +1,7 @@
+merek,n,jumlah,perbaikan_rata_pct,perbaikan_maks_pct,ga_kalah_nn,ga2opt_kalah_nn
+alfamart,10,300,0.0,0.0,2,2
+alfamart,20,300,0.0451,2.9255,3,3
+alfamart,30,300,0.3569,9.1854,12,9
+indomaret,10,300,0.0,0.0,0,0
+indomaret,20,300,0.0301,5.6852,7,7
+indomaret,30,300,0.2686,9.5477,20,18
