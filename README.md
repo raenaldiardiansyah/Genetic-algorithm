@@ -28,12 +28,13 @@ Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raemal
 | Bagian | Status |
 |---|---|
 | Pengambilan data OSM, matriks jarak Dijkstra | Selesai |
-| GA (OX, inversi, turnamen, elitisme, penjaga keragaman) | Selesai, 20 tes lulus |
+| GA (OX, inversi, turnamen, elitisme, penjaga keragaman) | Selesai, 22 tes lulus |
 | Pembanding: NN, Held-Karp, OR-Tools, GA + 2-opt | Selesai |
 | Eksperimen utama (900 skenario per merek) | Selesai |
 | Eksperimen parameter (Indomaret, 30 toko) | Selesai |
+| Evaluasi sampai optimum (10 toko) | Selesai |
 | Validasi TSPLIB (kroA100, ftv33, ftv70) | Selesai |
-| Visualisasi: grafik konvergensi, peta rute, GIF per generasi | **Belum dibuat** |
+| Visualisasi: grafik konvergensi, peta rute, GIF per generasi | Selesai (`scripts/11_visualisasi.py`, contoh di `hasil/`) |
 | Pembaruan slide dengan angka sebenarnya | **Belum** (lihat bagian 10) |
 | Laporan, video YouTube (publik), repositori GitHub | **Belum** |
 
@@ -42,13 +43,15 @@ Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raemal
 ## 3. Struktur proyek
 
 ```
-tubes-ga-bandung/
+Genetic-algorithm/
+├── ga_demo.ipynb        Notebook demo satu skenario (NN, GA, Held-Karp, konvergensi)
 ├── ga_rute/
 │   ├── ga.py            GA: populasi, turnamen, rank, OX, PMX, inversi, elitisme, 2-opt
 │   ├── baselines.py     Nearest neighbor, Held-Karp, OR-Tools
 │   ├── data.py          Unduh OSM, snap ke simpul jalan, matriks Dijkstra
 │   ├── skenario.py      Zona toko, pembuatan skenario (seed tetap), submatriks
 │   ├── tsplib.py        Pembaca file TSPLIB (.tsp EUC_2D, .atsp FULL_MATRIX)
+│   ├── visual.py        Jalur rute di graf jalan, pemilihan bingkai GIF
 │   └── konfig.py        Radius, ukuran, jumlah skenario, populasi, generasi
 ├── scripts/
 │   ├── demo_sintetis.py          Demo GA pada data sintetis (tanpa OSM)
@@ -61,8 +64,10 @@ tubes-ga-bandung/
 │   ├── 07_cek_ga_kalah.py        Skenario saat GA lebih panjang dari NN (Lampiran A)
 │   ├── 08_ortools.py             Patokan OR-Tools (20 dan 30 toko)
 │   ├── 09_eksperimen_parameter.py  Penyetelan parameter pada skenario terpisah
-│   └── 10_tsplib.py              Validasi pada soal TSPLIB
-├── tests/               20 tes otomatis (pytest)
+│   ├── 10_tsplib.py              Validasi pada soal TSPLIB
+│   ├── 11_visualisasi.py         Peta rute, grafik konvergensi, GIF per generasi
+│   └── 12_evaluasi_optimum.py    Evaluasi sampai optimum Held-Karp (10 toko)
+├── tests/               22 tes otomatis (pytest)
 ├── data/                gudang.csv, indomaret.csv, alfamart.csv, jalan_bandung.graphml,
 │                        matriks_*.npy, tsplib/
 ├── hasil/               CSV hasil eksperimen dan ringkasan
@@ -73,13 +78,13 @@ tubes-ga-bandung/
 
 ## 4. Lingkungan dan cara menjalankan
 
-**Sistem yang dipakai:** Windows, VS Code, Python **3.12** (`.venv312`). OR-Tools belum tersedia untuk Python 3.15, jadi gunakan 3.12.
+**Sistem yang dipakai:** Windows, VS Code, Python **3.12** (`.venv312`, dipakai saat eksperimen) atau **3.13** (`.venv`, 22 tes lulus). OR-Tools belum tersedia untuk Python 3.15. Bila memakai `.venv`, ubah `python.defaultInterpreterPath` di `.vscode/settings.json`.
 
 ```
-py -3.12 -m venv .venv312
+py -3.12 -m venv .venv312               # atau: py -3.13 -m venv .venv
 .venv312\Scripts\Activate.ps1
 pip install --default-timeout=100 --retries 10 -r requirements.txt
-pytest                                  # 20 passed
+pytest                                  # 22 passed
 ```
 
 **Urutan eksperimen dari nol:**
@@ -94,6 +99,8 @@ python scripts/06_ringkasan.py                            # tabel ringkasan
 python scripts/09_eksperimen_parameter.py --merek indomaret --n 30
 python scripts/10_tsplib.py                               # taruh file TSPLIB di data/tsplib/
 python scripts/10_tsplib.py --lokal akhir
+python scripts/11_visualisasi.py --merek indomaret --gudang 1 --n 10 --k 1   # peta, konvergensi, GIF
+python scripts/12_evaluasi_optimum.py                     # evaluasi sampai optimum (10 toko)
 ```
 
 Runner dan OR-Tools menulis hasil per skenario, sehingga bisa dihentikan (Ctrl+C) dan dilanjutkan dengan perintah yang sama. Pada komputer Anda satu kali GA (100 individu × 1.000 generasi) sekitar 2,7 sampai 3,7 detik.
@@ -176,7 +183,7 @@ Implementasi: seleksi, OX, dan mutasi dikerjakan sekaligus untuk seluruh populas
 | OR-Tools | 20 dan 30 toko | Guided Local Search, strategi awal PATH_CHEAPEST_ARC, jarak dibulatkan ke meter. Dibatasi waktu per skenario (lihat kolom `detik` pada `hasil/ortools_*.csv`), jadi **bukan optimum pasti** |
 | GA + 2-opt | Semua ukuran | 2-opt khusus jarak asimetris, hanya pada hasil akhir |
 
-Statistik: uji Wilcoxon berpasangan, koreksi Holm, efek berupa korelasi rank-biserial. GA vs NN diuji satu arah (NN lebih panjang); GA vs OR-Tools diuji dua arah.
+Statistik: uji Wilcoxon berpasangan, koreksi Holm, efek berupa korelasi rank-biserial (untuk GA vs NN dan GA vs OR-Tools). GA vs NN diuji satu arah (NN lebih panjang); GA vs OR-Tools diuji dua arah.
 
 ---
 
@@ -209,6 +216,19 @@ Statistik: uji Wilcoxon berpasangan, koreksi Holm, efek berupa korelasi rank-bis
 
 Seluruh nilai `p` (Holm) < 0,001; efek rank-biserial 0,970 sampai 1,000.
 
+**Evaluasi sampai optimum (10 toko, `scripts/12_evaluasi_optimum.py`).** Jumlah individu yang dievaluasi sampai rute terbaik GA pertama kali sama dengan optimum Held-Karp: 100 individu awal + 98 anak per generasi. Rata-rata dan median hanya dihitung dari run yang mencapai optimum. Hasil GA pada 600 run ini identik dengan `hasil_<merek>.csv`.
+
+| Merek | Gudang | Sukses (%) | Evaluasi median | Evaluasi rata² | Evaluasi maks |
+|---|---|---|---|---|---|
+| Alfamart | 1 | 100 | 3.138 | 5.602 | 38.320 |
+| Alfamart | 2 | 98 | 4.706 | 11.929 | 78.696 |
+| Alfamart | 3 | 97 | 2.844 | 4.731 | 73.404 |
+| Indomaret | 1 | 100 | 3.285 | 4.561 | 26.952 |
+| Indomaret | 2 | 100 | 2.746 | 4.869 | 44.298 |
+| Indomaret | 3 | 99 | 2.550 | 5.602 | 50.178 |
+
+Median sekitar 2.500 sampai 4.700 evaluasi (generasi ke-25 sampai ke-47), jauh di bawah anggaran 100.000, sedangkan 10! = 3.628.800 urutan.
+
 **Kasus GA lebih panjang dari NN:** 44 dari 1.800 skenario (2,4%). Pada 10 toko: 2 kasus (kalah 0,6% sampai 1,4%); 20 toko: 10 kasus (1,3% sampai 3,2%); 30 toko: 32 kasus (median 2,7%, terburuk 10,8%).
 
 ### 8.2 GA vs OR-Tools (20 dan 30 toko)
@@ -229,6 +249,8 @@ Gap positif berarti rute GA lebih panjang dari OR-Tools.
 | Indomaret | 2 | 30 | 8,11 | 3,29 | 11,37 | 22,84 | 23,08 | 5 |
 | Indomaret | 3 | 20 | 2,07 | 0,10 | 4,06 | 11,68 | 16,74 | 2 |
 | Indomaret | 3 | 30 | 5,62 | 3,00 | 8,97 | 20,26 | 19,55 | 4 |
+
+Uji Wilcoxon dua arah: seluruh `p` (Holm) < 0,001; efek rank-biserial 0,908 sampai 1,000 (positif berarti rute GA lebih panjang dari OR-Tools). Nilai per baris ada di kolom `efek_r` pada `hasil/ringkasan_ortools.csv`.
 
 Catatan: pada sebagian skenario GA mengalahkan OR-Tools, artinya patokan OR-Tools dengan batas waktu bukan optimum sejati. Gap yang dilaporkan sedikit meremehkan jarak sebenarnya ke optimum. Gudang 2 konsisten paling sulit pada 30 toko.
 
@@ -274,7 +296,7 @@ Empat konfigurasi teratas tidak dapat dibedakan secara meyakinkan (simpangan ant
 
 GA tidak mencapai optimum pada satu pun dari 30 run. Kualitas turun cepat bila ukuran masalah naik pada anggaran 100.000 evaluasi. 2-opt sangat membantu pada soal simetris (kroA100), tetapi hampir tidak pada soal asimetris; dugaan: pembalikan potongan pada jarak asimetris mengubah biaya seluruh ruas di dalamnya sehingga jarang menemukan perbaikan, dan Or-opt lebih cocok (belum diuji).
 
-Pemeriksaan file: OR-Tools menemukan 21282 (kroA100) dan 1286 (ftv33) persis, dan 1950 (ftv70) pada batas waktu 120 detik (1967 pada 60 detik, 2033 pada 20 detik). Tidak ada hasil lebih kecil dari nilai optimum resmi. **[perlu diperiksa]**: cocokkan nilai optimum ftv33 dan ftv70 dengan daftar resmi TSPLIB sebelum dilaporkan.
+Pemeriksaan file: OR-Tools menemukan 21282 (kroA100) dan 1286 (ftv33) persis, dan 1950 (ftv70) pada batas waktu 120 detik (1967 pada 60 detik, 2033 pada 20 detik). Tidak ada hasil lebih kecil dari nilai optimum resmi. Nilai optimum 1286 (ftv33), 1950 (ftv70), dan 21282 (kroA100) sama dengan daftar optimum TSPLIB.
 
 ---
 
@@ -302,17 +324,19 @@ Pemeriksaan file: OR-Tools menemukan 21282 (kroA100) dan 1286 (ftv33) persis, da
 | 11–13 | Mutasi dijelaskan umum | Mutasi inversi per individu, peluang 0,2, dengan penjaga keragaman |
 | 18 | Mutasi {0,02; 0,05; 0,1; 0,2; 0,5} | Sudah sesuai; hasil: 0,2 terbaik (hanya diuji lengkap pada Indomaret 30 toko) |
 | 18 | "Membuktikan GA bekerja" | Sebut sebagai pengukuran gap, dengan hasil TSPLIB yang jauh dari optimum untuk GA murni |
-| 17 | Peta rute dan GIF | Belum ada; perlu skrip visualisasi |
+| 17 | Peta rute dan GIF | Sudah ada: `scripts/11_visualisasi.py`, contoh `hasil/peta_*.png`, `hasil/ga_*.gif` |
 | 19 | Jadwal 26 Des | Eksperimen selesai lebih awal; sisa laporan, video, GitHub |
 
 ---
 
 ## 11. Langkah yang tersisa
 
-- [ ] Skrip visualisasi: grafik konvergensi, peta rute di jaringan jalan asli (osmnx), GIF per generasi
+- [x] Skrip visualisasi: grafik konvergensi, peta rute di jaringan jalan asli (osmnx), GIF per generasi
+- [x] Evaluasi sampai optimum untuk 10 toko (bagian 8.1)
+- [x] Effect size GA vs OR-Tools (bagian 8.2)
 - [ ] Isi alasan pemilihan tiga gudang (bagian 5.4)
 - [ ] Perbarui slide sesuai bagian 10
-- [ ] Cocokkan nilai optimum ftv33 dan ftv70 dengan daftar resmi TSPLIB
+- [x] Cocokkan nilai optimum ftv33 dan ftv70 dengan daftar resmi TSPLIB
 - [ ] (Opsional) Beberapa seed per skenario; Or-opt untuk soal asimetris; penyetelan pada Alfamart dan 20 toko
 - [ ] Tulis laporan (rancangan, hasil, keterbatasan)
 - [ ] Rekam video dan unggah ke YouTube (publik)

@@ -2,7 +2,7 @@ import itertools
 import numpy as np
 from ga_rute.ga import (panjang_rute, panjang_populasi, order_crossover,
                         mutasi_inversi, jalankan_ga, order_crossover_batch,
-                        mutasi_inversi_batch)
+                        mutasi_inversi_batch, generasi_capai)
 from ga_rute.baselines import nearest_neighbor, held_karp
 
 
@@ -104,3 +104,9 @@ def test_inversi_batch_membalik_potongan():
     pop = np.array([[3, 1, 4, 2, 5], [1, 2, 3, 4, 5]])
     hasil = mutasi_inversi_batch(pop, np.array([1, 0]), np.array([4, 5]))
     assert hasil.tolist() == [[3, 2, 4, 1, 5], [5, 4, 3, 2, 1]]
+
+
+def test_generasi_capai():
+    riwayat = np.array([12.0, 11.5, 10.0, 10.0])
+    assert generasi_capai(riwayat, 10.0) == 2
+    assert generasi_capai(riwayat, 9.0) == -1

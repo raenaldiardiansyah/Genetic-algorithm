@@ -86,7 +86,8 @@ if orf:
                           gap_ga_median_pct=gap.median(), q1=gap.quantile(.25),
                           q3=gap.quantile(.75), gap_ga_maks_pct=gap.max(),
                           gap_nn_median_pct=gap_nn.median(),
-                          ga_lebih_baik_dari_or_pct=100 * float((d < -1e-9).mean()), p=p))
+                          ga_lebih_baik_dari_or_pct=100 * float((d < -1e-9).mean()),
+                          efek_r=efek_rank_biserial(d), p=p))   # efek_r > 0: GA lebih panjang
     t2 = pd.DataFrame(baris)
     t2["p_holm"] = holm(t2["p"].values)
     t2 = t2.drop(columns=["p"])

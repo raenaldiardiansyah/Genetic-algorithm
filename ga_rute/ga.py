@@ -148,6 +148,12 @@ def perbaiki_2opt(D, rute, maks_iter=200):
     return r[1:-1]
 
 
+def generasi_capai(riwayat, target, tol=1e-6):
+    """Indeks pertama di riwayat yang panjangnya <= target (+tol), atau -1 bila tidak pernah."""
+    capai = np.flatnonzero(np.asarray(riwayat) <= target + tol)
+    return int(capai[0]) if len(capai) else -1
+
+
 def jalankan_ga(D, ukuran_pop=100, generasi=1000, p_cx=0.9, p_mut=0.2,
                 k_turnamen=3, n_elit=2, seed=0, jaga_keragaman=True,
                 crossover="ox", seleksi="turnamen", lokal=None, callback=None):
