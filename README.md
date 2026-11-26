@@ -2,7 +2,7 @@
 # Dokumentasi Proyek: Optimasi Rute Distribusi ke Gerai Indomaret di Kota Bandung dengan Algoritma Genetika
 
 Tugas Besar Kecerdasan Buatan 2026–2027 · Dosen: Dr. Budhi Irawan, S.Si., M.T. · Universitas Telkom
-Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raemaldi Ardiansyah Sidik]
+Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raenaldi Ardiansyah Sidik]
 
 > Dokumen ini merangkum seluruh pekerjaan yang sudah dilakukan: rancangan, data, kode, hasil, keterbatasan, dan langkah yang tersisa. Semua angka hasil diambil dari keluaran program yang dijalankan pada data Kota Bandung (OpenStreetMap), kecuali yang diberi tanda **[perlu diperiksa]**.
 
