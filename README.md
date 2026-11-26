@@ -2,9 +2,9 @@
 # Dokumentasi Proyek: Optimasi Rute Distribusi ke Gerai Indomaret di Kota Bandung dengan Algoritma Genetika
 
 Tugas Besar Kecerdasan Buatan 2026–2027 · Dosen: Dr. Budhi Irawan, S.Si., M.T. · Universitas Telkom
-Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raenaldi Ardiansyah Sidik]
+Kelompok 10: Muhammad Nibroos Labiib · Muhammad Rafi Al Fauzan · Raenaldi Ardiansyah Sidik
 
-> Dokumen ini merangkum seluruh pekerjaan yang sudah dilakukan: rancangan, data, kode, hasil, keterbatasan, dan langkah yang tersisa. Semua angka hasil diambil dari keluaran program yang dijalankan pada data Kota Bandung (OpenStreetMap), kecuali yang diberi tanda **[perlu diperiksa]**.
+> Dokumen ini merangkum seluruh pekerjaan yang sudah dilakukan: rancangan, data, kode, hasil, keterbatasan, dan langkah yang tersisa. Semua angka hasil diambil dari keluaran program yang dijalankan pada data Kota Bandung (OpenStreetMap).
 
 ---
 
@@ -35,8 +35,11 @@ Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raenal
 | Evaluasi sampai optimum (10 toko) | Selesai |
 | Validasi TSPLIB (kroA100, ftv33, ftv70) | Selesai |
 | Visualisasi: grafik konvergensi, peta rute, GIF per generasi | Selesai (`scripts/11_visualisasi.py`, contoh di `hasil/`) |
-| Pembaruan slide dengan angka sebenarnya | **Belum** (lihat bagian 10) |
-| Laporan, video YouTube (publik), repositori GitHub | **Belum** |
+| Slide presentasi (15 slide, sesuai panduan dosen) | Selesai (berkas PPTX dikumpulkan terpisah) |
+| Laporan tugas besar | Selesai (berkas .docx, diunggah ke Google Drive) |
+| Notebook demo, termasuk pilih gerai sendiri | Selesai (`ga_demo.ipynb`) |
+| Repositori GitHub | Selesai (github.com/raenaldiardiansyah/Genetic-algorithm) |
+| Video YouTube (publik) | **Belum** |
 
 ---
 
@@ -86,7 +89,7 @@ Genetic-algorithm/
 py -3.12 -m venv .venv312               # atau: py -3.13 -m venv .venv
 .venv312\Scripts\Activate.ps1
 pip install --default-timeout=100 --retries 10 -r requirements.txt
-pytest                                  # 22 passed
+pytest                                  # 23 passed
 ```
 
 **Urutan eksperimen dari nol:**
@@ -119,7 +122,7 @@ Runner dan OR-Tools menulis hasil per skenario, sehingga bisa dihentikan (Ctrl+C
 | Jaringan jalan | OpenStreetMap (osmnx, `network_type="drive"`) | Batas Kota Bandung + buffer 2 km, komponen terhubung kuat terbesar |
 | Soal validasi | TSPLIB (Reinelt, 1991) | kroA100, ftv33, ftv70 |
 
-Jumlah gerai berasal dari ukuran matriks jarak (175 dan 147 titik, masing-masing dikurangi 3 gudang). Slide awal menyebut 173 dan 148; angka dari program yang benar. Slide menyebut snapshot 17 Nov 2026, padahal data diunduh sekitar 21 Nov 2026. **[perlu diperiksa]**: catat tanggal unduh yang sebenarnya.
+Jumlah gerai berasal dari ukuran matriks jarak (175 dan 147 titik, masing-masing dikurangi 3 gudang). Slide proposal menyebut 173 dan 148; angka dari program yang benar dan dipakai di slide akhir. Data diunduh sebelum 24 Nov 2026 (tanggal commit pertama data di repositori); tanggal unduh persisnya tidak tercatat.
 
 Lisensi data OSM: ODbL, atribusi "© OpenStreetMap contributors".
 
@@ -141,7 +144,14 @@ Tiga titik, dipakai bersama oleh kedua merek agar perbandingan adil. **Bukan lok
 | 2 | Gudang Barat (area Kopo) | -6.9478 | 107.5861 |
 | 3 | Gudang Utara (area Setiabudi) | -6.8781 | 107.6033 |
 
-**[perlu diisi]**: alasan pemilihan tiap lokasi (permintaan slide 15: "alasan tertulis").
+**Alasan pemilihan lokasi.** Lokasi pusat distribusi Indomaret dan Alfamart di Bandung tidak dipublikasikan: tidak ada di OpenStreetMap maupun dataset terbuka (misalnya Kaggle), dan direktori publik hanya mencantumkan alamat kantor cabang yang belum tentu gudang. Karena itu tiga gudang dibuat sebagai titik simulasi:
+
+- **Menyebar di tiga sisi kota** (timur, barat, utara) agar zona 8 km tiap gudang tidak bertumpuk dan menguji pola sebaran gerai yang berbeda.
+- **Dekat jalan utama dan kawasan yang cocok untuk gudang:** Gedebage (kawasan pergudangan dan akses tol di timur), Kopo (jalur arteri ke selatan-barat), Setiabudi (jalur utama ke utara).
+- **Cukup gerai di sekitarnya:** setiap gudang punya 61 sampai 103 gerai dalam 8 km (tabel 5.5), cukup untuk skenario 30 toko.
+- **Sama untuk kedua merek,** agar perbandingan Indomaret dan Alfamart adil.
+
+Akibatnya angka jarak tidak mewakili operasi nyata perusahaan; yang diuji adalah kinerja GA pada jaringan jalan asli. Jika koordinat gudang diganti, jalankan ulang `02_bangun_matriks.py` dan seluruh eksperimen (skrip 02 menolak jalan bila jumlah gudang tidak sama dengan `JUMLAH_GUDANG`).
 
 ### 5.5 Zona dan skenario
 - **Zona:** gerai dengan jarak jalan ≤ **8 km** dari gudang (diambil nilai terkecil dari kedua arah). Radius dipilih dari tabel jumlah toko per radius (target ≥ 45 toko per sel). Pada 6 km, sebagian sel hanya berisi 36 toko, terlalu sedikit untuk skenario 30 toko.
@@ -316,18 +326,9 @@ Pemeriksaan file: OR-Tools menemukan 21282 (kroA100) dan 1286 (ftv33) persis, da
 
 ---
 
-## 10. Perbedaan dengan slide yang perlu diperbarui
+## 10. Kesesuaian dengan slide proposal
 
-| Slide | Isi lama | Isi yang benar |
-|---|---|---|
-| 4, 9, 14, 15 | 173 Indomaret, 148 Alfamart | 172 Indomaret, 144 Alfamart (tanggal unduh sebenarnya) |
-| 14 | Zona ≤ 6 km | Zona ≤ 8 km jarak jalan |
-| 4 | "Tiap jaringan punya gudang sendiri" | Gudang simulasi yang sama untuk kedua merek (agar perbandingan adil), bukan gudang asli |
-| 11–13 | Mutasi dijelaskan umum | Mutasi inversi per individu, peluang 0,2, dengan penjaga keragaman |
-| 18 | Mutasi {0,02; 0,05; 0,1; 0,2; 0,5} | Sudah sesuai; hasil: 0,2 terbaik (hanya diuji lengkap pada Indomaret 30 toko) |
-| 18 | "Membuktikan GA bekerja" | Sebut sebagai pengukuran gap, dengan hasil TSPLIB yang jauh dari optimum untuk GA murni |
-| 17 | Peta rute dan GIF | Sudah ada: `scripts/11_visualisasi.py`, contoh `hasil/peta_*.png`, `hasil/ga_*.gif` |
-| 19 | Jadwal 26 Des | Eksperimen selesai lebih awal; sisa laporan, video, GitHub |
+Seluruh perbedaan dengan slide proposal sudah dibetulkan di slide akhir: jumlah gerai 172 dan 144, zona 8 km, gudang simulasi yang sama untuk kedua merek, mutasi inversi 0,2 dengan penjaga keragaman, hasil eksperimen parameter, pengukuran gap (termasuk TSPLIB yang jauh dari optimum untuk GA murni), serta peta rute dan GIF dari `scripts/11_visualisasi.py`.
 
 ---
 
@@ -336,15 +337,17 @@ Pemeriksaan file: OR-Tools menemukan 21282 (kroA100) dan 1286 (ftv33) persis, da
 - [x] Skrip visualisasi: grafik konvergensi, peta rute di jaringan jalan asli (osmnx), GIF per generasi
 - [x] Evaluasi sampai optimum untuk 10 toko (bagian 8.1)
 - [x] Effect size GA vs OR-Tools (bagian 8.2)
-- [ ] Isi alasan pemilihan tiga gudang (bagian 5.4)
-- [ ] Perbarui slide sesuai bagian 10
+- [x] Alasan pemilihan tiga gudang (bagian 5.4)
+- [x] Slide akhir 15 slide sesuai panduan dosen
 - [x] Cocokkan nilai optimum ftv33 dan ftv70 dengan daftar resmi TSPLIB
+- [x] Laporan (rancangan, hasil, keterbatasan)
+- [x] Unggah ke GitHub (kode, `data/`, `hasil/`, README), atribusi OSM dan TSPLIB
+- [x] Nama kelompok
+- [ ] Isi NIM di sampul slide dan laporan; isi link Google Drive (laporan) dan YouTube di slide 9
+- [ ] Rekam video (maks. 10 menit) dan unggah ke YouTube (publik)
 - [ ] (Opsional) Beberapa seed per skenario; Or-opt untuk soal asimetris; penyetelan pada Alfamart dan 20 toko
-- [ ] Tulis laporan (rancangan, hasil, keterbatasan)
-- [ ] Rekam video dan unggah ke YouTube (publik)
-- [ ] Unggah ke GitHub (kode, `data/`, `hasil/`, README), cantumkan atribusi OSM dan TSPLIB
-- [ ] Isi nama kelompok dan pembagian tugas
-- [ ] Konfirmasi ke dosen: makna "minimal 100 sampel" (100 lokasi data atau 100 skenario)
+
+Catatan "minimal 100 sampel": kedua tafsiran terpenuhi, yaitu 172 dan 144 lokasi gerai, serta 100 skenario per kombinasi merek × gudang × ukuran.
 
 ---
 
@@ -353,65 +356,17 @@ Pemeriksaan file: OR-Tools menemukan 21282 (kroA100) dan 1286 (ftv33) persis, da
 - OpenStreetMap contributors, lisensi ODbL.
 - G. Reinelt, *TSPLIB: A Traveling Salesman Problem Library*, ORSA Journal on Computing 3(4), 1991, hlm. 376–384. File kroA100, ftv33, ftv70 diperoleh dari salinan di GitHub karena situs TSPLIB95 tidak dapat diakses; isinya diperiksa konsisten (bagian 8.5).
 - Google OR-Tools (solver rute) · osmnx · networkx · numpy · pandas · scipy · matplotlib · pytest.
-- Held, M. dan Karp, R. M., 1962 (dynamic programming untuk TSP).
-- Davis, 1985 (Order Crossover); Goldberg dan Lingle, 1985 (PMX). **[perlu diperiksa]**: lengkapi rujukan sebelum dimasukkan ke laporan.
+- Held, M. dan Karp, R. M., 1962. A dynamic programming approach to sequencing problems. *Journal of the SIAM* 10(1), hlm. 196–210.
+- Davis, L., 1985. Applying adaptive algorithms to epistatic domains. *Proceedings of IJCAI-85*, hlm. 162–164 (Order Crossover).
+- Goldberg, D. E. dan Lingle, R., 1985. Alleles, loci, and the traveling salesman problem. *Proceedings of the First International Conference on Genetic Algorithms*, hlm. 154–159 (PMX).
 
 ---
 
 ## Lampiran A. Skrip bantu
 
-**`scripts/03_cek_radius.py`**
-
-```python
-import sys, pathlib
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-import numpy as np
-import pandas as pd
-from ga_rute.skenario import toko_dalam_zona
-
-gudang = pd.read_csv("data/gudang.csv")
-for merek in ("indomaret", "alfamart"):
-    D = np.load(f"data/matriks_{merek}.npy")
-    idx = list(range(len(gudang), D.shape[0]))
-    print(f"\n{merek}: jumlah toko dalam zona")
-    print("radius_km | " + " | ".join(f"gudang {i+1}" for i in range(len(gudang))))
-    for r in (6, 8, 10, 12, 14, 16, 20):
-        jml = [len(toko_dalam_zona(D, k, idx, r)) for k in range(len(gudang))]
-        print(f"{r:>9} | " + " | ".join(f"{j:>8}" for j in jml))
-```
-
-**`scripts/04_benchmark.py`** (radius 10 km dipakai di sini hanya untuk mengukur waktu)
-
-```python
-import sys, pathlib, time, os
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-import numpy as np
-from ga_rute.ga import jalankan_ga
-from ga_rute.skenario import (toko_dalam_zona, buat_skenario,
-                              submatriks, seed_skenario)
-
-print("Jumlah core CPU:", os.cpu_count())
-D = np.load("data/matriks_indomaret.npy")
-idx = list(range(3, D.shape[0]))
-zona = toko_dalam_zona(D, 0, idx, 10)
-for n in (10, 20, 30):
-    toko = buat_skenario(zona, n, seed_skenario(1, n, 1))
-    t = time.time()
-    _, hasil, _ = jalankan_ga(submatriks(D, 0, toko), 100, 1000, seed=1)
-    print(n, "toko:", round(hasil, 2), "km,", round(time.time() - t, 1), "detik")
-```
-
-**`scripts/07_cek_ga_kalah.py`**
-
-```python
-import pandas as pd
-df = pd.concat([pd.read_csv("hasil/hasil_indomaret.csv"),
-                pd.read_csv("hasil/hasil_alfamart.csv")])
-kalah = df[df.ga_km > df.nn_km + 1e-9].copy()
-kalah["selisih_pct"] = 100 * (kalah.ga_km - kalah.nn_km) / kalah.nn_km
-print(len(kalah), "dari", len(df), "skenario: GA lebih panjang dari NN")
-print(kalah.groupby("n").selisih_pct.describe().round(2))
-```
+- `scripts/03_cek_radius.py`: tabel jumlah toko per radius 6 sampai 20 km untuk tiap gudang (dasar pemilihan radius 8 km).
+- `scripts/04_benchmark.py`: mengukur waktu satu run GA untuk 10, 20, dan 30 toko (radius 10 km hanya untuk pengukuran waktu).
+- `scripts/07_cek_ga_kalah.py`: daftar skenario saat rute GA lebih panjang dari NN.
 
 ## Lampiran B. Format file hasil
 
