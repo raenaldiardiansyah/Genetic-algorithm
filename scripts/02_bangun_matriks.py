@@ -1,15 +1,20 @@
 """Langkah 2b: bangun matriks jarak jalan (Dijkstra) dari data hasil 01_unduh_osm.py."""
-import sys, pathlib
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import sys, os, pathlib
+RAKIT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAKIT))
+os.chdir(RAKIT)
 import numpy as np
 import pandas as pd
 import osmnx as ox
 from ga_rute import data
 from ga_rute.skenario import toko_dalam_zona
-from ga_rute.konfig import RADIUS_KM
+from ga_rute.konfig import RADIUS_KM, JUMLAH_GUDANG
 
 G = ox.load_graphml("data/jalan_bandung.graphml")
 gudang = pd.read_csv("data/gudang.csv")
+assert len(gudang) == JUMLAH_GUDANG, (
+    f"data/gudang.csv berisi {len(gudang)} gudang, tetapi JUMLAH_GUDANG = {JUMLAH_GUDANG}. "
+    "Samakan JUMLAH_GUDANG di ga_rute/konfig.py.")
 print("Gudang yang dipakai (PASTIKAN koordinatnya masuk akal di peta):")
 print(gudang.to_string(index=False))
 

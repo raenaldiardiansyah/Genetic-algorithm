@@ -1,3 +1,5 @@
+import os, pathlib
+os.chdir(pathlib.Path(__file__).resolve().parent.parent)
 import pandas as pd
 df = pd.concat([pd.read_csv("hasil/hasil_indomaret.csv"),
                 pd.read_csv("hasil/hasil_alfamart.csv")])

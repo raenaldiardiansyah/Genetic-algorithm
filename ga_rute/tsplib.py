@@ -2,7 +2,7 @@
 import re
 import numpy as np
 
-# Nilai optimum resmi (VERIFIKASI ulang dengan file solusi/daftar di situs TSPLIB sebelum dilaporkan)
+# Nilai optimum resmi TSPLIB
 OPTIMUM = {"kroA100": 21282, "ftv33": 1286, "ftv70": 1950}
 
 

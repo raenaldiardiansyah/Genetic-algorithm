@@ -1,6 +1,6 @@
 """Langkah 5: patokan OR-Tools untuk skenario 20 dan 30 toko (skenario SAMA dengan 05_runner).
 Hasil ke hasil/ortools_<merek>.csv; bisa dilanjutkan bila terhenti.
-Perlu Python 3.12 + paket ortools.
+Perlu Python 3.12+ dan paket ortools.
 
     python scripts/08_ortools.py --merek indomaret --jumlah 2 --detik 2   # uji cepat
     python scripts/08_ortools.py --merek semua                            # penuh

@@ -1,7 +1,9 @@
 """Langkah 2a: unduh jalan dan toko dari OSM, simpan ke folder data/.
 Butuh internet dan bisa lama. Hasil disimpan, jadi cukup dijalankan SEKALI."""
-import sys, pathlib
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import sys, os, pathlib
+RAKIT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAKIT))
+os.chdir(RAKIT)
 import osmnx as ox
 from ga_rute import data
 

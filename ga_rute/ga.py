@@ -27,12 +27,6 @@ def populasi_acak(n_toko, ukuran, rng):
     return np.array([rng.permutation(n_toko) + 1 for _ in range(ukuran)])
 
 
-def seleksi_turnamen(panjang, rng, k=3):
-    """Ambil k individu acak, kembalikan indeks yang rutenya terpendek."""
-    kandidat = rng.integers(0, len(panjang), size=k)
-    return kandidat[np.argmin(panjang[kandidat])]
-
-
 def order_crossover(p1, p2, rng):
     """OX: segmen tengah dari induk 1, sisanya urutan induk 2 mulai setelah segmen."""
     n = len(p1)

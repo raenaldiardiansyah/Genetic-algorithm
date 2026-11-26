@@ -1,6 +1,8 @@
 """Demo langkah 1: GA vs NN vs Held-Karp pada matriks jarak sintetis (tanpa OSM)."""
-import sys, pathlib
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import sys, os, pathlib
+RAKIT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAKIT))
+os.chdir(RAKIT)
 import numpy as np
 import matplotlib.pyplot as plt
 from ga_rute.ga import jalankan_ga

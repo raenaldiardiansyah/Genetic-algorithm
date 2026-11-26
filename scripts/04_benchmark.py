@@ -1,5 +1,7 @@
 import sys, pathlib, time, os
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+RAKIT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAKIT))
+os.chdir(RAKIT)
 import numpy as np
 from ga_rute.ga import jalankan_ga
 from ga_rute.skenario import (toko_dalam_zona, buat_skenario,
