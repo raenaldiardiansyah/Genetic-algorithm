@@ -20,7 +20,7 @@ from multiprocessing import Pool
 from ga_rute import konfig
 from ga_rute.ga import jalankan_ga, generasi_capai
 from ga_rute.baselines import held_karp
-from ga_rute.skenario import toko_dalam_zona, buat_skenario, submatriks, seed_skenario
+from ga_rute.skenario import skenario_ke
 
 N = 10
 N_ELIT = 2
@@ -29,9 +29,7 @@ N_ELIT = 2
 def kerjakan(tugas):
     merek, g, k = tugas
     D = np.load(f"data/matriks_{merek}.npy")
-    zona = toko_dalam_zona(D, g, range(konfig.JUMLAH_GUDANG, D.shape[0]), konfig.RADIUS_KM)
-    seed = seed_skenario(g + 1, N, k)
-    Ds = submatriks(D, g, buat_skenario(zona, N, seed))
+    Ds, _, seed = skenario_ke(D, g, N, k)
     _, ga_km, riwayat = jalankan_ga(Ds, konfig.UKURAN_POP, konfig.GENERASI, seed=seed)
     hk_km = held_karp(Ds)[1]
     gen = generasi_capai(riwayat, hk_km)

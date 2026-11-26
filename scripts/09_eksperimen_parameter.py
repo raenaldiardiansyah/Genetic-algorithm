@@ -14,7 +14,7 @@ from multiprocessing import Pool
 from ga_rute import konfig
 from ga_rute.ga import jalankan_ga
 from ga_rute.baselines import ortools_atsp
-from ga_rute.skenario import (toko_dalam_zona, buat_skenario, submatriks, seed_skenario)
+from ga_rute.skenario import skenario_ke
 
 ANGGARAN = 100_000
 DASAR = dict(pop=100, mut=0.2, crossover="ox", seleksi="turnamen", lokal=None)
@@ -32,11 +32,9 @@ _CACHE = {}
 def _skenario(merek, n, k):
     if merek not in _CACHE:
         _CACHE[merek] = np.load(f"data/matriks_{merek}.npy")
-    D = _CACHE[merek]
     g = (k - 1) % konfig.JUMLAH_GUDANG                  # gudang bergilir
-    zona = toko_dalam_zona(D, g, range(konfig.JUMLAH_GUDANG, D.shape[0]), konfig.RADIUS_KM)
-    seed = seed_skenario(g + 1, n, k)
-    return submatriks(D, g, buat_skenario(zona, n, seed)), seed, g + 1
+    Ds, _, seed = skenario_ke(_CACHE[merek], g, n, k)
+    return Ds, seed, g + 1
 
 
 def kerjakan(arg):

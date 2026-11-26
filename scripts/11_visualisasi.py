@@ -21,7 +21,7 @@ from ga_rute import konfig
 from ga_rute.data import simpul_terdekat
 from ga_rute.ga import jalankan_ga, panjang_rute
 from ga_rute.baselines import nearest_neighbor, held_karp
-from ga_rute.skenario import toko_dalam_zona, buat_skenario, submatriks, seed_skenario
+from ga_rute.skenario import skenario_ke
 from ga_rute.visual import jalur_rute, pilih_bingkai
 
 WARNA_JALAN, WARNA_GA, WARNA_NN = "#c9ced8", "#14213d", "#d1495b"
@@ -66,10 +66,7 @@ def main():
     n_gudang = konfig.JUMLAH_GUDANG
 
     g = a.gudang - 1
-    zona = toko_dalam_zona(D, g, range(n_gudang, D.shape[0]), konfig.RADIUS_KM)
-    seed = seed_skenario(a.gudang, a.n, a.k)
-    toko = buat_skenario(zona, a.n, seed)
-    Ds = submatriks(D, g, toko)
+    Ds, toko, seed = skenario_ke(D, g, a.n, a.k)
     kode = ["G"] + [f"T{i}" for i in range(1, a.n + 1)]
 
     lon = np.concatenate([[gudang["lon"].iloc[g]], toko_csv["lon"].values[toko - n_gudang]])

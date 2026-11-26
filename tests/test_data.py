@@ -38,6 +38,14 @@ def test_hapus_duplikat():
     assert len(hapus_duplikat(df)) == 2
 
 
+def test_holm_dan_rank_biserial():
+    from ga_rute.statistik import holm, efek_rank_biserial
+    hasil = holm([0.01, 0.04, 0.03, 0.005, 0.2])
+    assert np.allclose(hasil, [0.04, 0.09, 0.09, 0.025, 0.2])
+    assert efek_rank_biserial(np.array([1.0, 2.0, -0.5, 3.0, 0.0])) == 0.8
+    assert efek_rank_biserial(np.array([0.0, 0.0])) == 0.0
+
+
 def test_skenario_dapat_diulang_dan_submatriks_benar():
     D = np.arange(36, dtype=float).reshape(6, 6)
     zona = toko_dalam_zona(D, 0, [1, 2, 3, 4, 5], radius_km=100)

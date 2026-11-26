@@ -5,46 +5,26 @@ Perlu Python 3.12+ dan paket ortools.
     python scripts/08_ortools.py --merek indomaret --jumlah 2 --detik 2   # uji cepat
     python scripts/08_ortools.py --merek semua                            # penuh
 """
-import sys, os, pathlib, time, argparse, csv
+import sys, os, pathlib, argparse
 RAKIT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAKIT))
 os.chdir(RAKIT)
 
-import numpy as np
-from multiprocessing import Pool
 from ga_rute import konfig
 from ga_rute.baselines import ortools_atsp
-from ga_rute.skenario import (toko_dalam_zona, buat_skenario, submatriks,
-                              seed_skenario)
+from ga_rute.skenario import skenario_ke
+from ga_rute.runner import muat_matriks, sudah_selesai, jalankan_dan_tulis
 
 KOLOM = ["merek", "gudang", "n", "skenario", "seed", "or_km", "detik"]
-_CACHE = {}
 DETIK = 5
-
-
-def _muat(merek):
-    if merek not in _CACHE:
-        _CACHE[merek] = np.load(f"data/matriks_{merek}.npy")
-    return _CACHE[merek]
 
 
 def kerjakan(tugas):
     merek, g, n, k, detik = tugas
-    D = _muat(merek)
-    zona = toko_dalam_zona(D, g, range(konfig.JUMLAH_GUDANG, D.shape[0]), konfig.RADIUS_KM)
-    seed = seed_skenario(g + 1, n, k)
-    Ds = submatriks(D, g, buat_skenario(zona, n, seed))
+    Ds, _, seed = skenario_ke(muat_matriks(merek), g, n, k)
     _, km = ortools_atsp(Ds, detik=detik)
     return dict(merek=merek, gudang=g + 1, n=n, skenario=k, seed=seed,
                 or_km=round(km, 4), detik=detik)
-
-
-def sudah_selesai(path):
-    if not path.exists():
-        return set()
-    with open(path, newline="") as f:
-        return {(r["merek"], int(r["gudang"]), int(r["n"]), int(r["skenario"]))
-                for r in csv.DictReader(f)}
 
 
 def main():
@@ -68,19 +48,7 @@ def main():
               f"{a.proses} proses, {a.detik} detik/skenario")
         if not total:
             continue
-        baru = not path.exists()
-        mulai = time.time()
-        with open(path, "a", newline="") as f, Pool(a.proses) as pool:
-            w = csv.DictWriter(f, fieldnames=KOLOM)
-            if baru:
-                w.writeheader()
-            for i, baris in enumerate(pool.imap_unordered(kerjakan, tugas), 1):
-                w.writerow(baris)
-                f.flush()
-                if i % 10 == 0 or i == total:
-                    lalu = time.time() - mulai
-                    print(f"  {i}/{total}  berlalu {lalu/60:.1f} mnt, sisa sekitar "
-                          f"{lalu / i * (total - i) / 60:.1f} mnt")
+        jalankan_dan_tulis(path, tugas, kerjakan, KOLOM, a.proses)
     print("\nSelesai.")
 
 

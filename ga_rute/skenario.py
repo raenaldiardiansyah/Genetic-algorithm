@@ -22,3 +22,18 @@ def submatriks(D, idx_gudang, toko):
     """Matriks (N+1)x(N+1) dengan gudang di indeks 0, siap dipakai GA."""
     idx = [idx_gudang] + list(toko)
     return D[np.ix_(idx, idx)]
+
+
+def skenario_ke(D, g, n, k):
+    """Skenario ke-k untuk gudang g (0-based) dan n toko. Satu resep untuk semua skrip.
+
+    Kembalikan (Ds, toko, seed): submatriks siap GA, indeks toko di D, dan seed skenario.
+    """
+    from ga_rute import konfig
+    zona = toko_dalam_zona(D, g, range(konfig.JUMLAH_GUDANG, D.shape[0]), konfig.RADIUS_KM)
+    if len(zona) < n:
+        raise ValueError(f"Zona gudang {g + 1} hanya {len(zona)} toko, kurang dari N={n}. "
+                         "Naikkan RADIUS_KM di ga_rute/konfig.py.")
+    seed = seed_skenario(g + 1, n, k)
+    toko = buat_skenario(zona, n, seed)
+    return submatriks(D, g, toko), toko, seed

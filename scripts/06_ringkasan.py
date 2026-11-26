@@ -5,28 +5,8 @@ sys.path.insert(0, str(RAKIT))
 os.chdir(RAKIT)
 import numpy as np
 import pandas as pd
-from scipy.stats import wilcoxon, rankdata
-
-
-def holm(p):
-    p = np.asarray(p, dtype=float)
-    urut = np.argsort(p)
-    m = len(p)
-    hasil = np.empty(m)
-    maks = 0.0
-    for rank, i in enumerate(urut):
-        maks = max(maks, (m - rank) * p[i])
-        hasil[i] = min(1.0, maks)
-    return hasil
-
-
-def efek_rank_biserial(d):
-    d = d[d != 0]
-    if len(d) == 0:
-        return 0.0
-    r = rankdata(np.abs(d))
-    plus, minus = r[d > 0].sum(), r[d < 0].sum()
-    return (plus - minus) / (plus + minus)
+from scipy.stats import wilcoxon
+from ga_rute.statistik import holm, efek_rank_biserial
 
 
 frames = []

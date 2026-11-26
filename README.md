@@ -28,7 +28,7 @@ Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raenal
 | Bagian | Status |
 |---|---|
 | Pengambilan data OSM, matriks jarak Dijkstra | Selesai |
-| GA (OX, inversi, turnamen, elitisme, penjaga keragaman) | Selesai, 22 tes lulus |
+| GA (OX, inversi, turnamen, elitisme, penjaga keragaman) | Selesai, 23 tes lulus |
 | Pembanding: NN, Held-Karp, OR-Tools, GA + 2-opt | Selesai |
 | Eksperimen utama (900 skenario per merek) | Selesai |
 | Eksperimen parameter (Indomaret, 30 toko) | Selesai |
@@ -44,12 +44,14 @@ Kelompok [10]: [Muhammad Nibroos Labiib] · [Muhammad Rafi Al Fauzan] · [Raenal
 
 ```
 Genetic-algorithm/
-├── ga_demo.ipynb        Notebook demo satu skenario (NN, GA, Held-Karp, konvergensi)
+├── ga_demo.ipynb        Notebook demo: satu skenario, visual hasil eksperimen, pilih gerai sendiri (widget)
 ├── ga_rute/
 │   ├── ga.py            GA: populasi, turnamen, rank, OX, PMX, inversi, elitisme, 2-opt
 │   ├── baselines.py     Nearest neighbor, Held-Karp, OR-Tools
 │   ├── data.py          Unduh OSM, snap ke simpul jalan, matriks Dijkstra
-│   ├── skenario.py      Zona toko, pembuatan skenario (seed tetap), submatriks
+│   ├── skenario.py      Zona toko, pembuatan skenario (seed tetap), submatriks, skenario_ke
+│   ├── runner.py        Bagian bersama 05/08: muat matriks, lanjutkan run, tulis CSV
+│   ├── statistik.py     Koreksi Holm dan efek rank-biserial
 │   ├── tsplib.py        Pembaca file TSPLIB (.tsp EUC_2D, .atsp FULL_MATRIX)
 │   ├── visual.py        Jalur rute di graf jalan, pemilihan bingkai GIF
 │   └── konfig.py        Radius, ukuran, jumlah skenario, populasi, generasi
@@ -67,7 +69,7 @@ Genetic-algorithm/
 │   ├── 10_tsplib.py              Validasi pada soal TSPLIB
 │   ├── 11_visualisasi.py         Peta rute, grafik konvergensi, GIF per generasi
 │   └── 12_evaluasi_optimum.py    Evaluasi sampai optimum Held-Karp (10 toko)
-├── tests/               22 tes otomatis (pytest)
+├── tests/               23 tes otomatis (pytest)
 ├── data/                gudang.csv, indomaret.csv, alfamart.csv, jalan_bandung.graphml,
 │                        matriks_*.npy, tsplib/
 ├── hasil/               CSV hasil eksperimen dan ringkasan
@@ -78,7 +80,7 @@ Genetic-algorithm/
 
 ## 4. Lingkungan dan cara menjalankan
 
-**Sistem yang dipakai:** Windows, VS Code, Python **3.12** (`.venv312`, dipakai saat eksperimen) atau **3.13** (`.venv`, 22 tes lulus). OR-Tools belum tersedia untuk Python 3.15. Bila memakai `.venv`, ubah `python.defaultInterpreterPath` di `.vscode/settings.json`.
+**Sistem yang dipakai:** Windows, VS Code, Python **3.12** (`.venv312`, dipakai saat eksperimen) atau **3.13** (`.venv`, 23 tes lulus). OR-Tools belum tersedia untuk Python 3.15. Bila memakai `.venv`, ubah `python.defaultInterpreterPath` di `.vscode/settings.json`.
 
 ```
 py -3.12 -m venv .venv312               # atau: py -3.13 -m venv .venv
